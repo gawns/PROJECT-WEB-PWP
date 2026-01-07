@@ -1,0 +1,119 @@
+:root {
+    --bg-dark: #0f0f0f;
+    --bg-card: #1a1a1a;
+    --accent: #ffc800; /* Gold */
+    --text-main: #ffffff;
+    --text-gray: #a0a0a0;
+    --danger: #e74c3c;
+    --success: #2ecc71;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 200, 0, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.gold { color: var(--accent); }
+
+/* Buttons */
+.btn-gold {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 200, 0, 0.3);
+    color: #000;
+}
+
+/* Icon Buttons (Delete/Edit) */
+.btn-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    background: rgba(255,255,255,0.05);
+    transition: 0.3s;
+}
+
+.btn-icon:hover {
+    background: var(--accent);
+    color: black;
+}
+
+.btn-delete:hover {
+    background: var(--danger) !important;
+    color: white !important;
+}
+
+/* Table Style */
+.responsive-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Error 404 Page */
+.error-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.error-code {
+    font-size: 6rem;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.error-message {
+    font-size: 1.5rem;
+    margin: 20px 0;
+    color: var(--text-gray);
+}

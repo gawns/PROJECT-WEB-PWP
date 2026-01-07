@@ -1,0 +1,47 @@
+/* =========================================
+   TABLE STYLES
+   ========================================= */
+
+/* Responsive Table */
+.responsive-table {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.responsive-table table {
+  width: 100%;
+  min-width: 600px;
+  color: white;
+  border-collapse: collapse;
+}
+
+.responsive-table th, 
+.responsive-table td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+  font-size: 0.85rem;
+}
+
+.responsive-table th {
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .responsive-table {
+    overflow-x: visible;
+  }
+  
+  .responsive-table table {
+    min-width: auto;
+  }
+  
+  .responsive-table th, 
+  .responsive-table td {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+}

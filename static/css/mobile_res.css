@@ -1,0 +1,561 @@
+/* =========================================
+   MOBILE RESPONSIVE STYLES
+   ========================================= */
+
+/* Breakpoint: 0px - 768px */
+@media (max-width: 768px) {
+    /* Reset dan Base */
+    html {
+        font-size: 13px !important;
+    }
+    
+    body {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Container dan Spacing */
+    .container {
+        padding: 0 15px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Utility Classes untuk Margin/Padding 2% */
+    .mb-mobile {
+        margin-bottom: 2% !important;
+    }
+    
+    .mt-mobile {
+        margin-top: 2% !important;
+    }
+    
+    .ml-mobile {
+        margin-left: 2% !important;
+    }
+    
+    .mr-mobile {
+        margin-right: 2% !important;
+    }
+    
+    .pb-mobile {
+        padding-bottom: 2% !important;
+    }
+    
+    .pt-mobile {
+        padding-top: 2% !important;
+    }
+    
+    .pl-mobile {
+        padding-left: 2% !important;
+    }
+    
+    .pr-mobile {
+        padding-right: 2% !important;
+    }
+    
+    /* Button Responsive */
+    .btn-gold,
+    .btn-outline,
+    .btn-auth,
+    .btn-icon {
+        width: 100% !important;
+        margin: 2% 0 !important;
+        padding: 12px 16px !important;
+        min-height: 44px !important;
+        font-size: 14px !important;
+        border-radius: 25px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+    }
+    
+    /* Input Responsive */
+    .input-modern,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="number"],
+    textarea,
+    select {
+        width: 96% !important;
+        margin: 2% !important;
+        padding: 12px 15px !important;
+        min-height: 44px !important;
+        font-size: 14px !important;
+        border-radius: 10px !important;
+    }
+    
+    /* Form Responsive */
+    .form-group,
+    .form-container,
+    .glass-panel {
+        margin: 2% !important;
+        padding: 4% !important;
+        width: 96% !important;
+    }
+    
+    /* Grid Responsive */
+    .row {
+        flex-direction: column !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    [class*='col-'] {
+        width: 100% !important;
+        margin: 2% 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Navbar Mobile */
+    .floating-nav {
+        height: 60px !important;
+        padding: 0 15px !important;
+    }
+    
+    .nav-brand {
+        font-size: 1rem !important;
+    }
+    
+    .nav-links {
+        position: fixed !important;
+        top: 60px !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: rgba(0, 0, 0, 0.98) !important;
+        backdrop-filter: blur(20px) !important;
+        flex-direction: column !important;
+        padding: 15px !important;
+        border-top: 1px solid #333 !important;
+    }
+    
+    .nav-link-item {
+        padding: 12px 0 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        margin: 0 !important;
+    }
+    
+    .nav-right {
+        gap: 8px !important;
+    }
+    
+    /* Hero Section Mobile */
+    .hero-full {
+        min-height: 90vh !important;
+        padding: 80px 15px 40px !important;
+    }
+    
+    .hero-title {
+        font-size: 2rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem !important;
+        margin-bottom: 25px !important;
+    }
+    
+    .hero-btns {
+        flex-direction: column !important;
+        gap: 10px !important;
+        margin-top: 25px !important;
+    }
+    
+    /* Menu Grid Mobile */
+    .menu-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+        padding: 0 !important;
+    }
+    
+    .menu-card {
+        margin: 2% !important;
+        width: 96% !important;
+    }
+    
+    .menu-card img {
+        height: 180px !important;
+    }
+    
+    /* Cart dan Order Mobile */
+    .order-layout {
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+    
+    .menu-side,
+    .summary-side {
+        width: 100% !important;
+        margin: 2% 0 !important;
+    }
+    
+    .cart-item {
+        flex-direction: column !important;
+        gap: 12px !important;
+        margin: 2% 0 !important;
+        padding: 15px !important;
+    }
+    
+    .cart-item-content {
+        flex-direction: column !important;
+        gap: 12px !important;
+        align-items: flex-start !important;
+    }
+    
+    .qty-control {
+        width: 100% !important;
+        justify-content: center !important;
+        margin-top: 10px !important;
+    }
+    
+    /* Auth Page Mobile */
+    .auth-card-container {
+        flex-direction: column !important;
+        max-width: 100% !important;
+        min-height: auto !important;
+        margin: 2% !important;
+    }
+    
+    .form-container,
+    .overlay-container {
+        width: 100% !important;
+        position: relative !important;
+    }
+    
+    .auth-card-container.right-panel-active .sign-in-container,
+    .auth-card-container.right-panel-active .sign-up-container {
+        transform: none !important;
+    }
+    
+    .overlay-container {
+        display: none !important;
+    }
+    
+    /* Table Responsive */
+    .responsive-table {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin: 2% !important;
+        width: 96% !important;
+    }
+    
+    table {
+        min-width: 600px !important;
+    }
+    
+    th, td {
+        padding: 10px 8px !important;
+        font-size: 12px !important;
+    }
+    
+    /* Admin Dropdown Mobile */
+    .admin-dropdown {
+        display: none !important;
+    }
+    
+    /* Modal Mobile */
+    .modal-overlay {
+        padding: 15px !important;
+    }
+    
+    .modal-content {
+        max-width: 100% !important;
+        padding: 20px !important;
+        margin: 2% !important;
+    }
+    
+    /* Flash Messages Mobile */
+    .flash-container {
+        top: 70px !important;
+        right: 15px !important;
+        left: 15px !important;
+        max-width: 100% !important;
+    }
+    
+    .flash-item {
+        padding: 12px !important;
+        margin-bottom: 10px !important;
+        font-size: 12px !important;
+    }
+    
+    /* Map Container Mobile */
+    .map-container {
+        height: 200px !important;
+        margin: 2% 0 !important;
+        width: 96% !important;
+    }
+    
+    /* Progress Steps Mobile */
+    .progress-steps {
+        flex-direction: column !important;
+        gap: 20px !important;
+        margin-bottom: 25px !important;
+    }
+    
+    .progress-step {
+        min-width: 100% !important;
+    }
+    
+    /* Stats Cards Mobile */
+    .stat-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        margin: 2% !important;
+    }
+    
+    .stat-card {
+        padding: 15px !important;
+        margin: 2% 0 !important;
+    }
+    
+    /* Tabs Mobile */
+    .profile-tabs {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .btn-tab {
+        width: 96% !important;
+        margin: 2% !important;
+        padding: 15px !important;
+    }
+    
+    /* QR Code Mobile */
+    .qr-container {
+        max-width: 90% !important;
+        margin: 2% auto !important;
+        padding: 15px !important;
+    }
+    
+    /* Payment Methods Mobile */
+    .payment-methods .row {
+        flex-direction: column !important;
+    }
+    
+    .payment-method {
+        margin: 2% 0 !important;
+        width: 96% !important;
+    }
+    
+    /* Profile Page Mobile */
+    .profile-btn-group {
+        flex-direction: column !important;
+    }
+    
+    /* Auto Slider Mobile */
+    .auto-slider {
+        height: 50vh !important;
+        min-height: 300px !important;
+    }
+    
+    .slide-caption {
+        margin-left: 0 !important;
+        padding: 15px !important;
+        width: 90% !important;
+    }
+    
+    /* About Section Mobile */
+    .about-container {
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+    
+    .about-img,
+    .about-text {
+        width: 100% !important;
+        margin: 2% 0 !important;
+    }
+    
+    /* Checkbox dan Radio Mobile */
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 2% !important;
+    }
+    
+    /* Label Mobile */
+    label {
+        margin: 2% !important;
+        display: block !important;
+        width: 96% !important;
+    }
+    
+    /* Text Alignment Mobile */
+    .text-center-mobile {
+        text-align: center !important;
+    }
+    
+    .text-left-mobile {
+        text-align: left !important;
+    }
+    
+    .text-right-mobile {
+        text-align: right !important;
+    }
+    
+    /* Hide on Mobile */
+    .hide-mobile {
+        display: none !important;
+    }
+    
+    /* Show on Mobile */
+    .show-mobile {
+        display: block !important;
+    }
+    
+    /* Touch-friendly elements */
+    .touch-target {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+    
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth !important;
+    }
+    
+    /* Fix iOS input zoom */
+    @supports (-webkit-touch-callout: none) {
+        input,
+        textarea,
+        select {
+            font-size: 16px !important;
+        }
+    }
+    
+    /* Fix viewport height on mobile */
+    .min-height-screen {
+        min-height: calc(var(--vh, 1vh) * 100) !important;
+    }
+}
+
+/* Breakpoint: 0px - 480px (Extra Small) */
+@media (max-width: 480px) {
+    html {
+        font-size: 12px !important;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem !important;
+    }
+    
+    .stat-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .btn-gold,
+    .btn-outline {
+        padding: 10px 14px !important;
+        font-size: 13px !important;
+    }
+    
+    .menu-card {
+        margin: 1% !important;
+        width: 98% !important;
+    }
+}
+
+/* Landscape Mode */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-full {
+        min-height: 120vh !important;
+        padding-top: 100px !important;
+    }
+    
+    .floating-nav {
+        height: 50px !important;
+    }
+    
+    .nav-links {
+        top: 50px !important;
+    }
+}
+
+/* High DPI Screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .btn-gold,
+    .btn-outline,
+    .btn-icon {
+        border-width: 1.5px !important;
+    }
+    
+    .glass-panel {
+        backdrop-filter: blur(20px) !important;
+    }
+}
+
+/* Dark Mode Preference */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent: #ffc800 !important;
+        --bg-dark: #0a0a0a !important;
+    }
+}
+
+/* Reduce Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Mobile Logout Button Fix */
+@media (max-width: 768px) {
+    .nav-right .btn-outline {
+        padding: 8px 15px !important;
+        font-size: 12px !important;
+        min-height: 36px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+    
+    .nav-right .btn-outline span {
+        display: inline !important;
+    }
+    
+    .nav-right .btn-gold {
+        padding: 8px 15px !important;
+        font-size: 12px !important;
+        min-height: 36px !important;
+    }
+    
+    .nav-right .btn-icon {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+    }
+    /* Navbar buttons khusus */
+    .nav-right .btn-gold,
+    .nav-right .btn-outline {
+        margin: 0 2% !important;
+        padding: 8px 12px !important;
+        font-size: 12px !important;
+        height: 36px !important;
+    }
+    
+    .nav-right .btn-outline span {
+        display: inline !important;
+        margin-left: 5px !important;
+    }
+    
+    /* Hide text on small screens */
+    .nav-right .btn-outline .hide-mobile {
+        display: none !important;
+    }
+    
+    /* Show icon only */
+    .nav-right .btn-outline i {
+        margin: 0 !important;
+    }
+}

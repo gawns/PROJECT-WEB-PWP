@@ -1,0 +1,68 @@
+/* =========================================
+   BASE STYLES - Core Variables & Reset
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
+
+:root {
+  --bg-dark: #0a0a0a;
+  --bg-card: #141414;
+  --accent: #ffff00;
+  --pizza-red: #e74c3c;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-main: #ffffff;
+  --text-gray: #b0b0b0;
+  --gold: #ffff00;
+  --spacing-xs: 10px;
+  --spacing-sm: 15px;
+  --spacing-md: 20px;
+  --spacing-lg: 30px;
+  --spacing-xl: 40px;
+}
+
+/* RESET & BASE */
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+}
+
+body { 
+  font-family: 'Poppins', sans-serif; 
+  background: var(--bg-dark); 
+  color: var(--text-main); 
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+a { 
+  text-decoration: none; 
+  transition: 0.3s; 
+  color: inherit; 
+}
+
+ul { 
+  list-style: none; 
+}
+
+img { 
+  max-width: 100%; 
+  height: auto; 
+  display: block; 
+}
+
+/* Hide scrollbar utilities */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

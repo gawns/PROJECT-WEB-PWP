@@ -1,0 +1,270 @@
+/* =========================================
+   MOBILE RESPONSIVE AUTH STYLES
+   ========================================= */
+
+/* Breakpoint Mobile (0-768px) */
+@media (max-width: 768px) {
+    
+    /* Auth Page Wrapper */
+    .auth-page-wrapper {
+        padding: 0 !important;
+        min-height: 100vh !important;
+        background: #0a0a0a !important;
+    }
+    
+    .auth-overlay-dark {
+        display: none !important;
+    }
+    
+    /* Auth Card Container */
+    .auth-card-container {
+        max-width: 100% !important;
+        min-height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        flex-direction: column !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    /* Form Container */
+    .form-container {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        padding: 20px !important;
+        transition: none !important;
+        opacity: 1 !important;
+    }
+    
+    .sign-in-container,
+    .sign-up-container {
+        left: 0 !important;
+        width: 100% !important;
+        opacity: 1 !important;
+        z-index: 2 !important;
+    }
+    
+    /* Hide overlay on mobile */
+    .overlay-container {
+        display: none !important;
+    }
+    
+    /* Form Elements */
+    form {
+        padding: 0 15px !important;
+        width: 100% !important;
+    }
+    
+    h1 {
+        font-size: 1.8rem !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .auth-span {
+        font-size: 0.8rem !important;
+        margin: 10px 0 20px !important;
+    }
+    
+    /* Social Container */
+    .social-container {
+        margin: 15px 0 !important;
+    }
+    
+    .social-container i {
+        font-size: 2rem !important;
+    }
+    
+    /* Input Fields */
+    input {
+        padding: 12px 15px !important;
+        margin: 8px 0 !important;
+        font-size: 14px !important;
+        border-radius: 8px !important;
+        width: 100% !important;
+    }
+    
+    /* Auth Buttons */
+    .btn-auth {
+        width: 100% !important;
+        margin: 15px 0 !important;
+        padding: 14px !important;
+        font-size: 14px !important;
+        border-radius: 25px !important;
+        min-height: 48px !important;
+    }
+    
+    /* Mobile Navigation Tabs */
+    .auth-tabs-mobile {
+        display: flex !important;
+        width: 100% !important;
+        background: rgba(20, 20, 20, 0.9) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1000 !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    .auth-tab-btn {
+        flex: 1 !important;
+        padding: 15px !important;
+        text-align: center !important;
+        color: #888 !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        border-bottom: 3px solid transparent !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    
+    .auth-tab-btn.active {
+        color: var(--accent) !important;
+        border-bottom: 3px solid var(--accent) !important;
+    }
+    
+    /* Mobile Only Sign Up Button */
+    .mobile-signup-btn {
+        display: block !important;
+        background: var(--accent) !important;
+        color: #000 !important;
+        border: none !important;
+        padding: 12px 20px !important;
+        border-radius: 25px !important;
+        font-weight: 700 !important;
+        margin: 20px auto !important;
+        width: 90% !important;
+        text-align: center !important;
+        text-decoration: none !important;
+    }
+    
+    /* Form Container Spacing */
+    .form-container {
+        margin-top: 60px !important; /* Space for mobile tabs */
+    }
+    
+    /* Flash Messages Mobile */
+    .flash-messages {
+        top: 60px !important;
+        right: 10px !important;
+        left: 10px !important;
+    }
+    
+    .alert {
+        padding: 12px 15px !important;
+        font-size: 0.85rem !important;
+    }
+    
+    /* Password Toggle */
+    .password-toggle {
+        position: absolute !important;
+        right: 15px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        background: none !important;
+        border: none !important;
+        color: #888 !important;
+        font-size: 1.2rem !important;
+        cursor: pointer !important;
+    }
+    
+    .password-input-group {
+        position: relative !important;
+        width: 100% !important;
+    }
+    
+    .password-input-group input {
+        padding-right: 50px !important;
+        width: 100% !important;
+    }
+    
+    /* Form Links */
+    .form-links {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-top: 15px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .form-links a {
+        color: var(--accent) !important;
+        text-decoration: none !important;
+    }
+}
+
+/* Small Phones (0-480px) */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .auth-tab-btn {
+        font-size: 0.8rem !important;
+        padding: 12px !important;
+    }
+    
+    input {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+    }
+    
+    .btn-auth {
+        padding: 12px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* Landscape Mode */
+@media (max-height: 600px) and (orientation: landscape) {
+    .auth-page-wrapper {
+        min-height: 120vh !important;
+    }
+    
+    .auth-card-container {
+        min-height: 120vh !important;
+    }
+    
+    .form-container {
+        padding: 10px 20px !important;
+    }
+    
+    input {
+        padding: 8px 12px !important;
+        margin: 5px 0 !important;
+    }
+    
+    .btn-auth {
+        margin: 10px 0 !important;
+        padding: 10px !important;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .auth-card-container {
+        background: #0a0a0a !important;
+    }
+    
+    input {
+        background: #1a1a1a !important;
+        border-color: #333 !important;
+        color: #fff !important;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (pointer: coarse) and (hover: none) {
+    .btn-auth,
+    .auth-tab-btn,
+    .mobile-signup-btn {
+        min-height: 48px !important;
+        min-width: 48px !important;
+    }
+    
+    input {
+        font-size: 16px !important; /* Prevent iOS zoom */
+        min-height: 44px !important;
+    }
+}

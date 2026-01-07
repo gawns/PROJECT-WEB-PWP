@@ -1,0 +1,66 @@
+/* =========================================
+   LAYOUT & GRID SYSTEM
+   ========================================= */
+
+.container { 
+  width: 100%; 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 0 var(--spacing-md); 
+}
+
+.row { 
+  display: flex; 
+  flex-wrap: wrap; 
+  margin: 0 calc(var(--spacing-sm) * -1); 
+}
+
+[class*='col-'] { 
+  padding: 0 var(--spacing-sm); 
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Grid System Responsive */
+@media (min-width: 576px) {
+  html { font-size: 15px; }
+  
+  .col-sm-6 { width: 50%; }
+  .col-sm-4 { width: 33.333%; }
+  .col-sm-3 { width: 25%; }
+}
+
+@media (min-width: 768px) {
+  html { font-size: 16px; }
+  
+  .col-md-3 { width: 25%; }
+  .col-md-4 { width: 33.333%; }
+  .col-md-6 { width: 50%; }
+  .col-md-8 { width: 66.666%; }
+  
+  .row {
+    margin: 0 calc(var(--spacing-md) * -1);
+  }
+  
+  [class*='col-'] { 
+    padding: 0 var(--spacing-md); 
+  }
+}
+
+@media (min-width: 992px) {
+  .col-lg-3 { width: 25%; }
+  .col-lg-4 { width: 33.333%; }
+  .col-lg-6 { width: 50%; }
+  .col-lg-8 { width: 66.666%; }
+}
+
+/* Flex Layout Utilities */
+.flex-mobile-column {
+  flex-direction: column !important;
+}
+
+/* Display Utilities */
+.hide-mobile { display: none !important; }
+.show-mobile { display: block !important; }
+.hide-desktop { display: none !important; }
+.show-desktop { display: block !important; }

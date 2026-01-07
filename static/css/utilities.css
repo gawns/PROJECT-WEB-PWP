@@ -1,0 +1,144 @@
+/* =========================================
+   UTILITY CLASSES
+   ========================================= */
+
+/* Spacing Utilities */
+.mb-1 { margin-bottom: var(--spacing-xs) !important; }
+.mb-2 { margin-bottom: var(--spacing-sm) !important; }
+.mb-3 { margin-bottom: var(--spacing-md) !important; }
+.mb-4 { margin-bottom: var(--spacing-lg) !important; }
+.mb-5 { margin-bottom: var(--spacing-xl) !important; }
+
+.mt-1 { margin-top: var(--spacing-xs) !important; }
+.mt-2 { margin-top: var(--spacing-sm) !important; }
+.mt-3 { margin-top: var(--spacing-md) !important; }
+.mt-4 { margin-top: var(--spacing-lg) !important; }
+.mt-5 { margin-top: var(--spacing-xl) !important; }
+
+.p-1 { padding: var(--spacing-xs) !important; }
+.p-2 { padding: var(--spacing-sm) !important; }
+.p-3 { padding: var(--spacing-md) !important; }
+.p-4 { padding: var(--spacing-lg) !important; }
+.p-5 { padding: var(--spacing-xl) !important; }
+
+.gap-1 { gap: var(--spacing-xs) !important; }
+.gap-2 { gap: var(--spacing-sm) !important; }
+.gap-3 { gap: var(--spacing-md) !important; }
+.gap-4 { gap: var(--spacing-lg) !important; }
+.gap-5 { gap: var(--spacing-xl) !important; }
+
+/* Mobile Spacing Utilities */
+.mb-mobile { margin-bottom: 2% !important; }
+.mt-mobile { margin-top: 2% !important; }
+.ml-mobile { margin-left: 2% !important; }
+.mr-mobile { margin-right: 2% !important; }
+
+.pb-mobile { padding-bottom: 2% !important; }
+.pt-mobile { padding-top: 2% !important; }
+.pl-mobile { padding-left: 2% !important; }
+.pr-mobile { padding-right: 2% !important; }
+
+/* Text Utilities */
+.text-center { text-align: center !important; }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
+
+.text-center-mobile { text-align: center !important; }
+.text-left-mobile { text-align: left !important; }
+.text-right-mobile { text-align: right !important; }
+
+.gold { color: var(--accent) !important; }
+.gold-tag { 
+  color: var(--accent); 
+  font-size: 0.75rem; 
+  letter-spacing: 2px; 
+  font-weight: 700; 
+  text-transform: uppercase; 
+  display: block; 
+  margin-bottom: var(--spacing-sm); 
+}
+
+.text-gray { color: var(--text-gray) !important; }
+.text-small { font-size: 0.85rem !important; }
+
+/* Touch Friendly */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Animation Utilities */
+.animate-fade { animation: fadeIn 0.8s ease forwards; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+/* ANIMATIONS */
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(20px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
+
+@keyframes float { 
+  0% { transform: translateY(0px); } 
+  50% { transform: translateY(-8px); } 
+  100% { transform: translateY(0px); } 
+}
+
+@keyframes slideIn { 
+  from { transform: translateX(100%); opacity: 0; } 
+  to { transform: translateX(0); opacity: 1; } 
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes statusChange {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s ease;
+}
+
+.reveal-left.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s ease;
+}
+
+.reveal-right.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.status-updated {
+  animation: statusChange 0.5s ease;
+}

@@ -1,0 +1,71 @@
+/* Custom Admin Style - Luxury Mobile First */
+:root {
+    --accent: #ffc800;
+    --bg-dark: #0a0a0a;
+    --glass: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsivitas Tabel untuk HP */
+@media (max-width: 768px) {
+    /* Sembunyikan Header Tabel */
+    .admin-table thead {
+        display: none;
+    }
+
+    /* Ubah Baris Tabel menjadi Card */
+    .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .admin-table tr {
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-table td {
+        text-align: right;
+        padding: 8px 5px;
+        border: none;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+    }
+
+    /* Menambahkan Label Otomatis dari Atribut data-label */
+    .admin-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        font-size: 0.7rem;
+    }
+
+    /* Penyesuaian Statistik di Mobile */
+    .stat-card-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 kolom di HP */
+        gap: 10px;
+    }
+    
+    .stat-card {
+        padding: 15px !important;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* Tombol Aksi yang lebih besar di Mobile */
+.btn-mobile-full {
+    @media (max-width: 768px) {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
