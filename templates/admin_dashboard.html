@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-container">
+    <div class="container">
+        <div class="admin-header">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div>
+                    <h2 class="admin-title">
+                        <i class="fa-solid fa-gauge-high"></i> Admin Dashboard
+                    </h2>
+                    <p class="admin-subtitle">
+                        Selamat datang, {{ session.username|default('Admin') }}!
+                    </p>
+                </div>
+                
+                <div class="admin-nav">
+                    <a href="{{ url_for('admin_orders') }}" class="admin-nav-btn">
+                        <i class="fa-solid fa-clipboard-list"></i> Pesanan
+                    </a>
+                    <a href="{{ url_for('admin_statistics') }}" class="admin-nav-btn">
+                        <i class="fa-solid fa-chart-line"></i> Statistik
+                    </a>
+                    <a href="{{ url_for('admin_users') }}" class="admin-nav-btn">
+                        <i class="fa-solid fa-users"></i> Users
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="admin-stats-grid">
+            <div class="admin-stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-value">Rp {{ "{:,}".format(stats.income|default(0)) }}</div>
+                <div class="stat-label">Pendapatan</div>
+            </div>
+            
+            <div class="admin-stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-pizza-slice"></i>
+                </div>
+                <div class="stat-value">{{ stats.sold|default(0) }} pcs</div>
+                <div class="stat-label">Terjual</div>
+            </div>
+            
+            <div class="admin-stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <div class="stat-value">{{ stats.new_users|default(0) }}</div>
+                <div class="stat-label">User Baru</div>
+            </div>
+            
+            <div class="admin-stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div class="stat-value" style="font-size: 1.2rem;">{{ stats.best|default('-')|truncate(15) }}</div>
+                <div class="stat-label">Best Seller</div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="admin-table-container mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="admin-title" style="font-size: 1.2rem; margin: 0;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Pesanan Terbaru
+                </h3>
+                <a href="{{ url_for('admin_orders') }}" class="admin-nav-btn" style="font-size: 0.8rem; padding: 5px 10px;">
+                    Lihat Semua
+                </a>
+            </div>
+            
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>KODE</th>
+                        <th>PELANGGAN</th>
+                        <th>MENU</th>
+                        <th class="text-center">STATUS</th>
+                        <th class="text-right">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if orders and orders|length > 0 %}
+                        {% for order in orders[:5] %}
+                        <tr>
+                            <td>
+                                <span class="order-code">{{ order.kode_pesanan|default('N/A') }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ order.username|default('Unknown') }}</strong>
+                            </td>
+                            <td>
+                                {{ order.menu_nama|default('Unknown Menu') }}
+                            </td>
+                            <td class="text-center">
+                                {% if order.status == 'pending' %}
+                                    <span class="status-badge status-pending">Pending</span>
+                                {% elif order.status == 'diproses' %}
+                                    <span class="status-badge status-processing">Diproses</span>
+                                {% elif order.status == 'dikirim' %}
+                                    <span class="status-badge status-shipping">Dikirim</span>
+                                {% elif order.status == 'selesai' %}
+                                    <span class="status-badge status-completed">Selesai</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-right">
+                                <strong>Rp {{ "{:,}".format(order.total_harga|default(0)) }}</strong>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <div class="text-gray">
+                                    <i class="fa-solid fa-inbox fa-2x mb-3"></i>
+                                    <p>Tidak ada pesanan terbaru</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- CRUD Menu Pizza -->
+        <div class="glass-panel mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="gold mb-0">
+                    <i class="fa-solid fa-gear"></i> Manajemen Menu
+                </h3>
+                <button class="btn-gold" onclick="document.getElementById('addModal').style.display='block'">
+                    <i class="fa-solid fa-plus"></i> Tambah Menu Baru
+                </button>
+            </div>
+            
+            <div class="responsive-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Gambar</th>
+                            <th>Nama Pizza</th>
+                            <th>Deskripsi</th>
+                            <th class="text-right">Harga</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if pizzas and pizzas|length > 0 %}
+                            {% for pizza in pizzas %}
+                            <tr>
+                                <td>
+                                    <img src="{{ pizza.gambar_url or 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=1000' }}" 
+                                         alt="{{ pizza.nama }}" 
+                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                </td>
+                                <td>
+                                    <strong>{{ pizza.nama }}</strong>
+                                    <br>
+                                    <small class="text-gray">{{ pizza.kategori|default('Premium Signature') }}</small>
+                                </td>
+                                <td>
+                                    {{ pizza.deskripsi|truncate(50) }}
+                                </td>
+                                <td class="text-right">
+                                    <strong class="gold">Rp {{ "{:,}".format(pizza.harga) }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{{ url_for('edit_menu', id=pizza.id) }}" class="btn-icon" title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a href="/admin/delete/{{ pizza.id }}" 
+                                        class="btn-icon" 
+                                        style="background: #e74c3c; color: white; display: flex; align-items: center; justify-content: center;" 
+                                        title="Hapus"
+                                        onclick="return confirm('Yakin ingin menghapus menu {{ pizza.nama }}?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <div class="text-gray">
+                                        <i class="fa-solid fa-pizza-slice fa-2x mb-3"></i>
+                                        <p>Belum ada menu pizza</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quick Actions (Tetap dipertahankan) -->
+        <div class="admin-stats-grid mt-4">
+            <a href="{{ url_for('add_menu') }}" class="admin-stat-card" style="text-decoration: none; cursor: pointer;">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <div class="stat-value">Tambah Menu</div>
+                <div class="stat-label">Klik untuk menambah menu baru</div>
+            </a>
+            
+            <a href="{{ url_for('admin_users') }}" class="admin-stat-card" style="text-decoration: none; cursor: pointer;">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div class="stat-value">Kelola User</div>
+                <div class="stat-label">Lihat dan kelola semua user</div>
+            </a>
+            
+            <a href="{{ url_for('admin_statistics') }}" class="admin-stat-card" style="text-decoration: none; cursor: pointer;">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-chart-bar"></i>
+                </div>
+                <div class="stat-value">Analytics</div>
+                <div class="stat-label">Lihat statistik lengkap</div>
+            </a>
+            
+            <a href="#manajemen-menu" class="admin-stat-card" style="text-decoration: none; cursor: pointer;">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-gear"></i>
+                </div>
+                <div class="stat-value">Settings</div>
+                <div class="stat-label">Pengaturan sistem</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal untuk Tambah Menu -->
+<div id="addModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="gold mb-0">Tambah Menu Baru</h3>
+            <button class="btn-icon" onclick="document.getElementById('addModal').style.display='none'">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <form action="{{ url_for('add_menu') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">NAMA PIZZA</label>
+                <input type="text" name="nama" class="input-modern" placeholder="Contoh: Margherita Supreme" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">DESKRIPSI</label>
+                <textarea name="deskripsi" class="input-modern" rows="3" placeholder="Jelaskan detail topping dan keunikan rasa..." required></textarea>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">HARGA (Rp)</label>
+                        <input type="number" name="harga" class="input-modern" placeholder="85000" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">KATEGORI</label>
+                        <select name="kategori" class="input-modern" required>
+                            <option value="Premium Signature">Premium Signature</option>
+                            <option value="Classic Fav">Classic Fav</option>
+                            <option value="New Arrival">New Arrival</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">URL GAMBAR</label>
+                <input type="url" name="gambar_url" class="input-modern" placeholder="https://images.unsplash.com/..." required>
+                <small class="form-hint">Gunakan URL gambar dari Unsplash atau hosting lainnya</small>
+            </div>
+            
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn-gold flex-grow-1">
+                    <i class="fa-solid fa-plus"></i> SIMPAN MENU
+                </button>
+                <button type="button" class="btn-outline" onclick="document.getElementById('addModal').style.display='none'">
+                    BATAL
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Include Admin CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_responsive.css') }}">
+
+<style>
+    .admin-stat-card[style*="cursor: pointer"]:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent);
+        background: rgba(255, 200, 0, 0.05);
+    }
+    
+    .order-code {
+        font-family: monospace;
+        font-weight: 700;
+        color: var(--accent);
+        background: rgba(255, 200, 0, 0.1);
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+    
+    /* Style untuk tabel CRUD */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    table th {
+        background: rgba(255, 200, 0, 0.1);
+        color: var(--accent);
+        font-weight: 700;
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 2px solid var(--accent);
+    }
+    
+    table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        vertical-align: middle;
+    }
+    
+    table tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+    
+    /* Modal styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+    }
+    
+    .modal-content {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 25px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid var(--accent);
+        box-shadow: 0 0 30px rgba(255, 200, 0, 0.2);
+    }
+</style>
+
+<script>
+    // Script untuk menampilkan/menyembunyikan modal
+    function showModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+    }
+    
+    function hideModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+    
+    // Tutup modal ketika klik di luar konten modal
+    document.addEventListener('click', function(event) {
+        const modals = document.querySelectorAll('.modal-overlay');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    
+    // Tutup modal dengan tombol ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+    });
+</script>
+{% endblock %}

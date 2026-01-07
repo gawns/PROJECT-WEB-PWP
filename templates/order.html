@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="order-bg">
+    <div class="container">
+        <form action="/order" method="POST" id="cartForm">
+            <div class="order-layout">
+                <!-- Menu Selection Side -->
+                <div class="menu-side">
+                    <div class="glass-panel animate__animated animate__fadeInLeft">
+                        <div class="mb-4">
+                            <h2 class="gold mb-2">
+                                <i class="fa-solid fa-pizza-slice"></i> Pilih Menu Favorit
+                            </h2>
+                            <p class="text-gray text-small">Pilih minimal 1 pizza untuk memesan</p>
+                        </div>
+                        
+                        {% if pizzas %}
+                            {% for pizza in pizzas %}
+                            <div class="cart-item">
+                                <div class="cart-item-content">
+                                    <input type="checkbox" 
+                                           name="selected_pizzas" 
+                                           value="{{ pizza.id }}" 
+                                           data-name="{{ pizza.nama }}" 
+                                           data-price="{{ pizza.harga }}" 
+                                           onchange="updateSummary()" 
+                                           class="pizza-checkbox"
+                                           id="pizza_{{ pizza.id }}">
+                                    
+                                    <label for="pizza_{{ pizza.id }}" class="flex-grow-1" style="cursor: pointer;">
+                                        <div style="display: flex; align-items: center; gap: 15px;">
+                                            <img src="{{ pizza.gambar_url }}" 
+                                                 width="70" 
+                                                 height="70" 
+                                                 style="border-radius:12px; object-fit:cover; border: 1px solid #333;"
+                                                 alt="{{ pizza.nama }}">
+                                            
+                                            <div style="flex:1;">
+                                                <h4 style="margin:0; font-size: 1rem; color: #fff;">{{ pizza.nama }}</h4>
+                                                <p class="text-gray text-small" style="margin:5px 0 0 0;">
+                                                    {{ pizza.deskripsi[:50] }}...
+                                                </p>
+                                                <p class="gold" style="margin:5px 0 0 0; font-weight: 700;">
+                                                    Rp {{ "{:,}".format(pizza.harga) }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <div class="qty-control" style="display: none;" id="qty_ctrl_{{ pizza.id }}">
+                                    <button type="button" 
+                                            onclick="changeQty('{{ pizza.id }}', -1)" 
+                                            class="qty-btn"
+                                            aria-label="Kurangi jumlah">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <input type="number" 
+                                           name="qty_{{ pizza.id }}" 
+                                           id="qty_{{ pizza.id }}" 
+                                           value="1" 
+                                           min="1" 
+                                           max="10" 
+                                           readonly 
+                                           class="qty-input">
+                                    <button type="button" 
+                                            onclick="changeQty('{{ pizza.id }}', 1)" 
+                                            class="qty-btn"
+                                            aria-label="Tambah jumlah">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center p-4">
+                                <i class="fa-solid fa-pizza-slice" style="font-size: 3rem; color: #333; margin-bottom: 15px;"></i>
+                                <p class="text-gray">Menu tidak tersedia saat ini</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Order Summary Side -->
+                <div class="summary-side">
+                    <div class="glass-panel animate__animated animate__fadeInRight">
+                        <h3 class="mb-3">
+                            <i class="fa-solid fa-receipt gold"></i> Ringkasan Pesanan
+                        </h3>
+                        
+                        <div id="summaryList" class="mb-4" style="min-height: 60px;">
+                            <p class="text-gray text-small text-center" style="font-style: italic;">
+                                Pilih pizza untuk mulai memesan...
+                            </p>
+                        </div>
+
+                        <div class="p-3 mb-4" style="background:rgba(0,0,0,0.5); border-radius:12px; border: 1px solid #222;">
+                            <span class="text-gray text-small" style="text-transform: uppercase; letter-spacing: 1px;">
+                                Estimasi Total
+                            </span>
+                            <h2 id="grandTotal" class="gold" style="margin:5px 0 0 0; font-size: 1.8rem; font-weight: 900;">
+                                Rp 0
+                            </h2>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fa-solid fa-location-dot gold"></i> Alamat Pengiriman
+                            </label>
+                            <textarea id="addressArea" 
+                                      name="address" 
+                                      class="input-modern" 
+                                      rows="3" 
+                                      placeholder="Masukkan alamat lengkap pengiriman..."
+                                      required></textarea>
+                            <input type="hidden" name="coordinate" id="coordArea">
+                            
+                            <div class="mt-2">
+                                <p class="text-gray text-small mb-2">
+                                    <i class="fa-solid fa-map-marker-alt"></i> Klik peta untuk memilih lokasi:
+                                </p>
+                                <div id="map" class="map-container"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" 
+                                class="btn-gold w-100" 
+                                id="btnCheckout" 
+                                disabled 
+                                style="padding: 16px; font-weight: 800;">
+                            <i class="fa-solid fa-arrow-right"></i> LANJUT KE PEMBAYARAN
+                        </button>
+                        
+                        <p class="text-gray text-small text-center mt-3">
+                            Dengan melanjutkan, Anda menyetujui 
+                            <a href="#" class="gold" style="text-decoration: underline;">Syarat & Ketentuan</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Initialize map
+    let map, marker;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize map
+        map = L.map('map').setView([-7.7956, 110.3695], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Add click event to map
+        map.on('click', function(e) {
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+            
+            document.getElementById('coordArea').value = 
+                e.latlng.lat.toFixed(6) + "," + e.latlng.lng.toFixed(6);
+            
+            // Reverse geocode (simplified - in production use actual geocoding service)
+            document.getElementById('addressArea').value = 
+                "Lokasi: " + e.latlng.lat.toFixed(6) + ", " + e.latlng.lng.toFixed(6);
+        });
+        
+        // Load saved location from session if exists
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLon = position.coords.longitude;
+                    
+                    map.setView([userLat, userLon], 15);
+                    
+                    if (!marker) {
+                        marker = L.marker([userLat, userLon]).addTo(map);
+                        document.getElementById('coordArea').value = 
+                            userLat.toFixed(6) + "," + userLon.toFixed(6);
+                    }
+                },
+                function(error) {
+                    console.log("Geolocation error:", error);
+                },
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            );
+        }
+    });
+    
+    function changeQty(id, delta) {
+        const input = document.getElementById('qty_' + id);
+        let newVal = parseInt(input.value) + delta;
+        
+        if (newVal >= 1 && newVal <= 10) {
+            input.value = newVal;
+            updateSummary();
+        }
+    }
+    
+    function updateSummary() {
+        const checkboxes = document.querySelectorAll('input[name="selected_pizzas"]:checked');
+        const summaryList = document.getElementById('summaryList');
+        const grandTotalElement = document.getElementById('grandTotal');
+        const btnCheckout = document.getElementById('btnCheckout');
+        
+        let html = "";
+        let total = 0;
+        let itemCount = 0;
+
+        checkboxes.forEach(cb => {
+            const id = cb.value;
+            const name = cb.getAttribute('data-name');
+            const price = parseInt(cb.getAttribute('data-price'));
+            const qtyInput = document.getElementById(`qty_${id}`);
+            const qtyCtrl = document.getElementById(`qty_ctrl_${id}`);
+            
+            // Show quantity control
+            if (qtyCtrl) qtyCtrl.style.display = 'flex';
+            
+            const qty = qtyInput ? parseInt(qtyInput.value) : 1;
+            const subtotal = price * qty;
+            
+            total += subtotal;
+            itemCount++;
+            
+            html += `<div class="cart-summary-item" style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <div>
+                            <span style="color:#ccc; font-weight:600;">${name}</span>
+                            <br>
+                            <small style="color:#888;">${qty} × Rp ${price.toLocaleString('id-ID')}</small>
+                        </div>
+                        <span style="color:#fff; font-weight:700;">Rp ${subtotal.toLocaleString('id-ID')}</span>
+                     </div>`;
+        });
+
+        // Hide quantity controls for unselected items
+        document.querySelectorAll('[id^="qty_ctrl_"]').forEach(ctrl => {
+            const id = ctrl.id.replace('qty_ctrl_', '');
+            const checkbox = document.getElementById(`pizza_${id}`);
+            if (checkbox && !checkbox.checked) {
+                ctrl.style.display = 'none';
+                const qtyInput = document.getElementById(`qty_${id}`);
+                if (qtyInput) qtyInput.value = 1;
+            }
+        });
+
+        if (html) {
+            summaryList.innerHTML = `
+                <div style="max-height:200px; overflow-y:auto;">
+                    ${html}
+                </div>
+            `;
+        } else {
+            summaryList.innerHTML = '<p class="text-gray text-small text-center" style="font-style: italic;">Pilih pizza untuk mulai memesan...</p>';
+        }
+        
+        grandTotalElement.innerText = "Rp " + total.toLocaleString('id-ID');
+        btnCheckout.disabled = itemCount === 0;
+        btnCheckout.textContent = itemCount > 0 ? 
+            `LANJUT KE PEMBAYARAN (${itemCount} item)` : 
+            'LANJUT KE PEMBAYARAN';
+    }
+    
+    // Update summary when page loads
+    document.addEventListener('DOMContentLoaded', updateSummary);
+</script>
+
+<style>
+    .pizza-checkbox {
+        width: 22px;
+        height: 22px;
+        accent-color: var(--accent);
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    
+    .qty-btn {
+        background: none;
+        border: none;
+        color: var(--accent);
+        cursor: pointer;
+        padding: 8px 12px;
+        font-size: 1rem;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .qty-input {
+        background: none;
+        border: none;
+        color: #fff;
+        width: 40px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1rem;
+        pointer-events: none;
+    }
+    
+    .cart-summary-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .flex-grow-1 {
+        flex-grow: 1;
+    }
+    
+    .w-100 {
+        width: 100% !important;
+    }
+</style>
+{% endblock %}

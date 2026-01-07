@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding-top: 150px; padding-bottom: 100px; min-height: 100vh; background: #0a0a0a;">
+    <div class="container">
+        <h2 class="animate__animated animate__fadeInLeft" style="color: var(--accent); margin-bottom: 30px; font-weight: 800;">
+            <i class="fa-solid fa-circle-user"></i> MEMBER AREA
+        </h2>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="glass-panel" style="padding: 20px; border-color: var(--accent);">
+                    <div class="profile-btn-group">
+                        <button class="btn-tab active" onclick="openTab(event, 'history')">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Order
+                        </button>
+                        <button class="btn-tab" onclick="openTab(event, 'settings')">
+                            <i class="fa-solid fa-user-gear"></i> Pengaturan Akun
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div id="history" class="tab-content active animate__animated animate__fadeIn">
+                    <div class="glass-panel">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h3 style="color: #fff; margin: 0; font-weight: 700;">Order Tracking</h3>
+                            <span class="text-gray" style="font-size: 0.8rem;">Total {{ user.orders|length }} Pesanan</span>
+                        </div>
+                        
+                        {% if user.orders %}
+                            {% for order in user.orders|sort(attribute='tanggal', reverse=True) %}
+                            <div style="background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;" class="order-card">
+                                <div style="display:flex; justify-content:space-between; align-items: flex-start; margin-bottom: 15px;">
+                                    <div>
+                                        <h4 style="color: var(--accent); margin:0; font-size: 1.1rem; font-weight: 800;">{{ order.menu_nama }}</h4>
+                                        <small style="color: #666; display: block; margin-top: 4px;">
+                                            <i class="fa-regular fa-calendar"></i> {{ order.tanggal }}
+                                        </small>
+                                    </div>
+                                    
+                                    {% if order.status == 'pending' %}
+                                        <span style="background: rgba(243, 156, 18, 0.15); color: #f39c12; padding: 6px 16px; border-radius: 50px; font-weight:800; font-size: 0.65rem; border: 1px solid #f39c12;">PENDING</span>
+                                    {% elif order.status == 'diproses' %}
+                                        <span style="background: rgba(52, 152, 219, 0.15); color: #3498db; padding: 6px 16px; border-radius: 50px; font-weight:800; font-size: 0.65rem; border: 1px solid #3498db;">DIPROSES</span>
+                                    {% elif order.status == 'dikirim' %}
+                                        <span style="background: rgba(155, 89, 182, 0.15); color: #9b59b6; padding: 6px 16px; border-radius: 50px; font-weight:800; font-size: 0.65rem; border: 1px solid #9b59b6;">DIKIRIM</span>
+                                    {% elif order.status == 'selesai' %}
+                                        <span style="background: rgba(46, 204, 113, 0.15); color: #2ecc71; padding: 6px 16px; border-radius: 50px; font-weight:800; font-size: 0.65rem; border: 1px solid #2ecc71;">SELESAI</span>
+                                    {% endif %}
+                                </div>
+
+                                <div style="display: flex; gap: 20px; padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <div style="flex: 1;">
+                                        <small style="color: #555; display: block; text-transform: uppercase; font-weight: 700; font-size: 0.6rem;">Jumlah</small>
+                                        <span style="color: #eee; font-weight: 600;">{{ order.quantity }} Loyang</span>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <small style="color: #555; display: block; text-transform: uppercase; font-weight: 700; font-size: 0.6rem;">Total Bayar</small>
+                                        <span style="color: var(--accent); font-weight: 800;">Rp {{ "{:,}".format(order.total_harga) }}</span>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 15px;">
+                                    {% if order.status == 'pending' %}
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <p style="color: #f39c12; margin: 0; font-size: 0.8rem;">
+                                                <i class="fa-solid fa-wallet"></i> Menunggu Pembayaran
+                                            </p>
+                                            <button onclick="showQRCode('{{ order.id }}', '{{ order.total_harga }}')" class="btn-gold" style="padding: 5px 15px; font-size: 0.7rem; border-radius: 8px;">
+                                                <i class="fa-solid fa-qrcode"></i> BAYAR SEKARANG
+                                            </button>
+                                        </div>
+                                    {% elif order.status == 'dikirim' %}
+                                        <div style="padding: 12px; background: rgba(155, 89, 182, 0.05); border-left: 3px solid #9b59b6; border-radius: 4px;">
+                                            <p style="color: #9b59b6; margin: 0; font-size: 0.8rem; font-weight: 500;">
+                                                <i class="fa-solid fa-truck-fast animate__animated animate__infinite animate__pulse"></i> Kurir sedang menuju lokasi Anda.
+                                            </p>
+                                        </div>
+                                    {% elif order.status == 'selesai' %}
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <p style="color: #2ecc71; margin: 0; font-size: 0.8rem;">
+                                                <i class="fa-solid fa-circle-check"></i> Pesanan sukses diterima
+                                            </p>
+                                            <button onclick="rateOrder({{ order.id }})" class="btn-gold" style="padding: 5px 15px; font-size: 0.7rem; border-radius: 8px;">
+                                                <i class="fa-solid fa-star"></i> 
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <p style="color: #555; margin: 0; font-size: 0.8rem;">
+                                            <i class="fa-solid fa-spinner fa-spin"></i> Menunggu pembaruan status dari dapur...
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center" style="padding: 60px 20px; background: rgba(0,0,0,0.1); border-radius: 20px; border: 1px dashed #333;">
+                                <i class="fa-solid fa-receipt" style="font-size: 3rem; color: #333; margin-bottom: 15px;"></i>
+                                <h4 style="color: #666;">Belum ada riwayat transaksi</h4>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div id="settings" class="tab-content animate__animated animate__fadeIn">
+                    <div class="glass-panel">
+                        <h3 style="color: #fff; margin-bottom: 25px;">Pengaturan Akun</h3>
+                        <form method="POST" action="/profile">
+                            <input type="hidden" name="action" value="update_profile">
+                            <div class="mb-4">
+                                <label style="color:#aaa; font-size:0.8rem;">NAMA PENGGUNA</label>
+                                <input type="text" name="username" class="input-modern" value="{{ user.username }}" required>
+                                <button type="submit" class="btn-gold" style="margin-top:10px; padding: 8px 20px;">Update Nama</button>
+                            </div>
+                        </form>
+                        <hr style="border-color:#333; margin:30px 0;">
+                        <form method="POST" action="/profile">
+                            <input type="hidden" name="action" value="change_password">
+                            <h4 style="color:var(--accent); margin-bottom:15px;">Ganti Password</h4>
+                            <input type="password" name="old_password" class="input-modern mb-3" placeholder="Password Lama" required>
+                            <div class="row">
+                                <div class="col-md-6"><input type="password" name="new_password" class="input-modern mb-3" placeholder="Password Baru" required></div>
+                                <div class="col-md-6"><input type="password" name="confirm_password" class="input-modern mb-3" placeholder="Konfirmasi Password Baru" required></div>
+                            </div>
+                            <button type="submit" class="btn-gold" style="width:100%; margin-top: 2%;">SIMPAN PASSWORD BARU</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="qrModal" class="modal-overlay" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;">
+    <div class="glass-panel" style="max-width: 420px; width: 90%; text-align: center; position: relative; border: 1px solid var(--accent); padding: 25px;">
+        <button onclick="closeQRModal()" style="position: absolute; right: 15px; top: 15px; background: none; border: none; color: #fff; font-size: 1.8rem; cursor: pointer; line-height: 1;">&times;</button>
+        
+        <h3 style="color: var(--accent); margin-bottom: 5px; font-weight: 800;">PEMBAYARAN QRIS</h3>
+        <p id="qrOrderCode" style="color: #888; font-size: 0.8rem; margin-bottom: 15px;"></p>
+        
+        <div style="background: #fff; padding: 10px; border-radius: 15px; display: inline-block; margin-bottom: 20px;">
+            <img src="{{ url_for('static', filename='qris.jpeg') }}" alt="QRIS" style="width: 100%; max-width: 300px; display: block; border-radius: 10px;">
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <p style="color: #aaa; font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase;">Total Tagihan:</p>
+            <h2 id="qrAmount" style="color: var(--accent); font-weight: 800; margin: 0;"></h2>
+        </div>
+        
+        <p style="color: #555; font-size: 0.7rem; margin-top: 15px; line-height: 1.4;">
+            *Simpan bukti pembayaran dan tunggu konfirmasi admin.<br>Status akan berubah otomatis setelah divalidasi.
+        </p>
+    </div>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("active");
+    }
+    tablinks = document.getElementsByClassName("btn-tab");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+
+// Fungsi menampilkan modal dengan data dinamis
+function showQRCode(id, amount) {
+    const modal = document.getElementById('qrModal');
+    document.getElementById('qrOrderCode').innerText = "ID PESANAN: #" + id;
+    
+    // Format ke Rupiah
+    const formatted = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(amount);
+    
+    document.getElementById('qrAmount').innerText = formatted;
+    
+    modal.style.display = 'flex';
+    setTimeout(() => { modal.style.opacity = '1'; }, 10);
+}
+
+function closeQRModal() {
+    const modal = document.getElementById('qrModal');
+    modal.style.opacity = '0';
+    setTimeout(() => { modal.style.display = 'none'; }, 300);
+}
+
+// Tutup jika klik area luar modal
+window.onclick = function(event) {
+    const modal = document.getElementById('qrModal');
+    if (event.target == modal) { closeQRModal(); }
+}
+</script>
+{% endblock %}

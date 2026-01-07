@@ -1,0 +1,314 @@
+<div class="modal-overlay" id="orderDetailsModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="gold mb-0">Detail Pesanan</h3>
+            <button onclick="closeModal()" class="btn-icon">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body" id="orderDetailsContent">
+            <div class="order-details">
+                <!-- Order Info -->
+                <div class="detail-section">
+                    <h5 class="gold mb-2">Informasi Pesanan</h5>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="label">Kode Pesanan:</span>
+                            <span class="value" id="detailOrderCode">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Tanggal:</span>
+                            <span class="value" id="detailOrderDate">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Menu:</span>
+                            <span class="value" id="detailOrderMenu">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Jumlah:</span>
+                            <span class="value" id="detailOrderQty">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Total:</span>
+                            <span class="value text-success" id="detailOrderTotal">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Info -->
+                <div class="detail-section">
+                    <h5 class="gold mb-2">Informasi Pelanggan</h5>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="label">Nama:</span>
+                            <span class="value" id="detailCustomerName">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Email:</span>
+                            <span class="value" id="detailCustomerEmail">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Telepon:</span>
+                            <span class="value" id="detailCustomerPhone">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Alamat:</span>
+                            <span class="value" id="detailCustomerAddress">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Info -->
+                <div class="detail-section">
+                    <h5 class="gold mb-2">Informasi Pembayaran</h5>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="label">Metode:</span>
+                            <span class="value" id="detailPaymentMethod">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Status:</span>
+                            <span class="value" id="detailPaymentStatus">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Waktu Bayar:</span>
+                            <span class="value" id="detailPaymentTime">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Status History -->
+                <div class="detail-section">
+                    <h5 class="gold mb-2">Status History</h5>
+                    <div class="status-history" id="statusHistory">
+                        <div class="status-item">
+                            <div class="status-dot pending"></div>
+                            <div class="status-content">
+                                <span class="status">Pending</span>
+                                <span class="time">10:00 - 01 Jan 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="detail-section">
+                    <div class="d-flex gap-2">
+                        <button onclick="printOrderDetails()" class="btn-outline flex-1">
+                            <i class="fa-solid fa-print"></i> Print
+                        </button>
+                        <button onclick="sendNotification()" class="btn-gold flex-1">
+                            <i class="fa-solid fa-bell"></i> Notifikasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+    }
+    
+    .modal-content {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 25px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 2px solid var(--accent);
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    
+    .detail-section {
+        margin-bottom: 25px;
+    }
+    
+    .detail-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .detail-grid {
+        display: grid;
+        gap: 12px;
+    }
+    
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+    
+    .detail-item .label {
+        color: #888;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    .detail-item .value {
+        color: #fff;
+        font-weight: 600;
+        text-align: right;
+        max-width: 60%;
+        word-break: break-word;
+        font-size: 0.9rem;
+    }
+    
+    .status-history {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    
+    .status-dot.pending { background: #f39c12; }
+    .status-dot.processing { background: #3498db; }
+    .status-dot.shipping { background: #9b59b6; }
+    .status-dot.completed { background: #2ecc71; }
+    
+    .status-content {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .status-content .status {
+        color: #fff;
+        font-weight: 600;
+        text-transform: capitalize;
+        font-size: 0.9rem;
+    }
+    
+    .status-content .time {
+        color: #888;
+        font-size: 0.8rem;
+    }
+    
+    .flex-1 {
+        flex: 1;
+    }
+    
+    .text-success {
+        color: #2ecc71 !important;
+    }
+    
+    /* Scrollbar styling */
+    .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .modal-body::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+    
+    .modal-body::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 3px;
+    }
+    
+    @media (max-width: 768px) {
+        .modal-overlay {
+            padding: 10px;
+        }
+        
+        .modal-content {
+            max-width: 100%;
+            padding: 20px;
+        }
+        
+        .modal-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .detail-item {
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .detail-item .value {
+            text-align: left;
+            max-width: 100%;
+        }
+        
+        .d-flex.gap-2 {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    function closeModal() {
+        document.getElementById('orderDetailsModal').style.display = 'none';
+    }
+    
+    function printOrderDetails() {
+        window.print();
+    }
+    
+    function sendNotification() {
+        alert('Fitur notifikasi akan segera tersedia!');
+    }
+    
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('orderDetailsModal');
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Close modal with ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+</script>

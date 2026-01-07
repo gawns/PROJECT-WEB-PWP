@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Pizza Lecker Thury | Premium Taste</title>
+    
+    <!-- Core CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cards.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sections.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/misc.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    
+    <!-- Conditional CSS Files -->
+    {% if request.path.startswith('/auth') or request.path.startswith('/login') or request.path.startswith('/register') %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    {% endif %}
+    
+    {% if session.get('role') == 'admin' or request.path.startswith('/admin') %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    {% endif %}
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>">
+</head>
+<body>
+    <nav class="floating-nav">
+        <a href="{{ url_for('home') }}" class="nav-brand">
+            <i class="fa-solid fa-pizza-slice"></i> LECKER THURY
+        </a>
+        
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <ul class="nav-links" id="navLinks">
+            <li><a href="{{ url_for('home') }}" class="nav-link-item">Home</a></li>
+            <li><a href="/#menu" class="nav-link-item">Menu</a></li>
+            <li><a href="{{ url_for('order') }}" class="nav-link-item">Order Now</a></li>
+        </ul>
+        
+        <div class="nav-right">
+            {% if session.get('role') == 'admin' %}
+            <div class="admin-dropdown">
+                <button class="btn-admin-trigger">
+                    <i class="fa-solid fa-lock"></i> 
+                    <span class="hide-mobile">ADMIN</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="admin-dropdown-content">
+                    <a href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+                    <a href="{{ url_for('admin_orders') }}"><i class="fa-solid fa-clipboard-list"></i> Pesanan</a>
+                    <a href="{{ url_for('admin_statistics') }}"><i class="fa-solid fa-chart-line"></i> Statistik</a>
+                    <a href="{{ url_for('admin_users') }}"><i class="fa-solid fa-users"></i> User</a>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('profile') }}" class="btn-icon" aria-label="Profile">
+                    <i class="fa-solid fa-circle-user"></i>
+                </a>
+                <a href="{{ url_for('logout') }}" class="btn-outline">
+                    <i class="fa-solid fa-right-from-bracket hide-mobile"></i>
+                    <span>Logout</span>
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-gold">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div id="flash-box" class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-item {{ 'error' if category == 'error' else 'warning' if category == 'warning' else '' }}">
+                        {% if category == 'error' %}
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        {% elif category == 'warning' %}
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        {% else %}
+                            <i class="fa-solid fa-circle-check"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- External JavaScript Libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Internal JavaScript Files -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    
+    <!-- Conditional JavaScript Loading -->
+    {% if request.path.startswith('/auth') or request.path.startswith('/login') or request.path.startswith('/register') %}
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    {% endif %}
+    
+    {% if session.get('role') == 'admin' or request.path.startswith('/admin') %}
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    {% endif %}
+    
+</body>
+</html>

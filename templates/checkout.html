@@ -1,0 +1,761 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-height-screen pt-5 pb-4 bg-dark">
+    <div class="container">
+        <!-- Progress Steps -->
+        <div class="mb-5">
+            <div class="text-center mb-4">
+                <h1 class="gold mb-2">
+                    <i class="fa-solid fa-bag-shopping"></i> Finalisasi Pesanan
+                </h1>
+                <p class="text-gray">Lengkapi data dan pilih metode pembayaran</p>
+            </div>
+            
+            <div class="progress-steps">
+                <div class="progress-step completed">
+                    <div class="step-number">1</div>
+                    <span class="step-label">Pilih Menu</span>
+                </div>
+                <div class="progress-step active">
+                    <div class="step-number">2</div>
+                    <span class="step-label">Checkout</span>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">3</div>
+                    <span class="step-label">Selesai</span>
+                </div>
+            </div>
+        </div>
+
+        <form action="/process_checkout" method="POST" class="checkout-form">
+            <div class="row">
+                <!-- Left Column - Forms -->
+                <div class="col-lg-8 mb-4">
+                    <!-- Delivery Information -->
+                    <div class="glass-panel mb-4 reveal-left">
+                        <h3 class="gold mb-3">
+                            <i class="fa-solid fa-truck-fast"></i> Informasi Pengiriman
+                        </h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" 
+                                       name="full_name" 
+                                       value="{{ session.get('username', '') }}" 
+                                       class="input-modern" 
+                                       required
+                                       placeholder="Masukkan nama lengkap">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nomor WhatsApp</label>
+                                <input type="tel" 
+                                       name="phone" 
+                                       class="input-modern" 
+                                       required
+                                       placeholder="0812-3456-7890"
+                                       pattern="[0-9]{10,13}">
+                                <small class="form-hint">Format: 081234567890</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Alamat Detail</label>
+                            <textarea name="address" 
+                                      class="input-modern" 
+                                      rows="3" 
+                                      required
+                                      placeholder="Contoh: Jl. Merdeka No. 123, RT 01/RW 02, Kelurahan...">{{ session.get('temp_order', {}).get('address', '') }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="glass-panel reveal-left" style="animation-delay: 0.2s;">
+                        <h3 class="gold mb-3">
+                            <i class="fa-solid fa-credit-card"></i> Metode Pembayaran
+                        </h3>
+                        
+                        <div class="payment-methods">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="payment-method selected" onclick="selectPayment('qris')">
+                                        <input type="radio" 
+                                               name="payment_method" 
+                                               value="QRIS" 
+                                               checked 
+                                               class="d-none">
+                                        <div class="payment-icon">
+                                            <i class="fa-solid fa-qrcode"></i>
+                                        </div>
+                                        <div class="payment-info">
+                                            <h4>QRIS</h4>
+                                            <p class="text-small">E-Wallet/Bank</p>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="payment-method" onclick="selectPayment('bca')">
+                                        <input type="radio" 
+                                               name="payment_method" 
+                                               value="BCA" 
+                                               class="d-none">
+                                        <div class="payment-icon">
+                                            <i class="fa-solid fa-building-columns"></i>
+                                        </div>
+                                        <div class="payment-info">
+                                            <h4>Transfer BCA</h4>
+                                            <p class="text-small">0812345678</p>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="payment-method" onclick="selectPayment('cod')">
+                                        <input type="radio" 
+                                               name="payment_method" 
+                                               value="COD" 
+                                               class="d-none">
+                                        <div class="payment-icon">
+                                            <i class="fa-solid fa-money-bill-wave"></i>
+                                        </div>
+                                        <div class="payment-info">
+                                            <h4>Bayar di Tempat</h4>
+                                            <p class="text-small">Cash On Delivery</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Instructions -->
+                        <div id="paymentInstructions" class="payment-instructions mt-4 p-3">
+                            <h5 class="gold mb-2">Instruksi Pembayaran QRIS:</h5>
+                            <ol class="text-small" style="color: #aaa; padding-left: 20px;">
+                                <li>Scan QR code yang akan muncul setelah konfirmasi</li>
+                                <li>Pilih aplikasi e-wallet atau mobile banking Anda</li>
+                                <li>Konfirmasi pembayaran</li>
+                                <li>Simpan bukti pembayaran</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Order Summary -->
+                <div class="col-lg-4 mb-4">
+                    <div class="glass-panel sticky-top reveal-right" style="top: 90px;">
+                        <h3 class="gold mb-3">Ringkasan Pesanan</h3>
+                        
+                        <div class="order-items mb-4" style="max-height: 200px; overflow-y: auto;">
+                            {% if items and items|length > 0 %}
+                                {% for item in items %}
+                                <div class="order-item mb-2">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <span class="text-small">{{ item.nama }}</span>
+                                            <br>
+                                            <small class="text-gray">×{{ item.qty }}</small>
+                                        </div>
+                                        <span class="text-small text-right">Rp {{ "{:,}".format(item.subtotal) }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% elif order_data and order_data.get('items') %}
+                                {% for item in order_data.get('items', []) %}
+                                <div class="order-item mb-2">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <span class="text-small">{{ item.nama }}</span>
+                                            <br>
+                                            <small class="text-gray">×{{ item.qty }}</small>
+                                        </div>
+                                        <span class="text-small text-right">Rp {{ "{:,}".format(item.subtotal) }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-3">
+                                    <i class="fa-solid fa-shopping-cart text-gray" style="font-size: 2rem;"></i>
+                                    <p class="text-gray mt-2">Tidak ada item</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="price-breakdown">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-gray">Subtotal</span>
+                                <span>Rp {{ "{:,}".format(subtotal) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-gray">Biaya Layanan</span>
+                                <span id="taxAmount">Rp 0</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-gray">Ongkir</span>
+                                <span id="shippingFee">Rp 15,000</span>
+                            </div>
+                            <hr style="border-color: #333; margin: 15px 0;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-gray">Total Bayar</span>
+                                <h3 id="totalAmount" class="gold mb-0">Rp {{ "{:,}".format(subtotal + 15000) }}</h3>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" 
+                                class="btn-gold w-100 mt-4" 
+                                style="padding: 16px; font-weight: 800;">
+                            <i class="fa-solid fa-lock"></i> KONFIRMASI PEMBAYARAN
+                        </button>
+                        
+                        <p class="text-gray text-small text-center mt-3">
+                            Dengan mengkonfirmasi, Anda menyetujui 
+                            <a href="#" class="gold">Syarat & Ketentuan</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- QR Code Modal -->
+<div id="qrModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="text-center">
+            <h3 class="gold mb-3">
+                <i class="fa-solid fa-qrcode"></i> QR Code Pembayaran
+            </h3>
+            
+            <div class="qr-container mb-3" id="qrCodeDisplay">
+                <div class="qr-placeholder">
+                    <i class="fa-solid fa-qrcode" style="font-size: 3rem; color: #ccc;"></i>
+                    <p class="text-gray mt-2">QR code akan muncul setelah pembayaran</p>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <p class="text-small mb-1" id="orderCodeDisplay">Kode Order: -</p>
+                <h4 class="gold" id="orderAmountDisplay">Rp 0</h4>
+            </div>
+            
+            <button onclick="closeQRModal()" class="btn-outline w-100">
+                <i class="fa-solid fa-times"></i> Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Payment calculation
+    const baseSubtotal = {{ subtotal }};
+    const shippingFee = 15000;
+    let selectedMethod = 'qris';
+    
+    function selectPayment(method) {
+        selectedMethod = method;
+        
+        // Update UI
+        document.querySelectorAll('.payment-method').forEach(el => {
+            el.classList.remove('selected');
+        });
+        event.currentTarget.classList.add('selected');
+        
+        // Update payment instructions
+        const instructions = document.getElementById('paymentInstructions');
+        let taxRate = 0;
+        
+        switch(method) {
+            case 'qris':
+                instructions.innerHTML = `
+                    <h5 class="gold mb-2">Instruksi Pembayaran QRIS:</h5>
+                    <ol class="text-small" style="color: #aaa; padding-left: 20px;">
+                        <li>Scan QR code yang akan muncul setelah konfirmasi</li>
+                        <li>Pilih aplikasi e-wallet atau mobile banking Anda</li>
+                        <li>Konfirmasi pembayaran</li>
+                        <li>Simpan bukti pembayaran</li>
+                    </ol>
+                `;
+                taxRate = 0;
+                break;
+                
+            case 'bca':
+                instructions.innerHTML = `
+                    <h5 class="gold mb-2">Instruksi Transfer BCA:</h5>
+                    <ol class="text-small" style="color: #aaa; padding-left: 20px;">
+                        <li>Transfer ke BCA: 0812 3456 7890 a/n Pizza Thury</li>
+                        <li>Jumlah: <strong id="transferAmount"></strong></li>
+                        <li>Gunakan kode order sebagai keterangan</li>
+                        <li>Upload bukti transfer setelah checkout</li>
+                    </ol>
+                `;
+                taxRate = 0.005;
+                break;
+                
+            case 'cod':
+                instructions.innerHTML = `
+                    <h5 class="gold mb-2">Instruksi Bayar di Tempat:</h5>
+                    <ul class="text-small" style="color: #aaa; padding-left: 20px;">
+                        <li>Siapkan uang tunai sesuai total pesanan</li>
+                        <li>Bayar langsung ke kurir saat pesanan tiba</li>
+                        <li>Dapatkan struk pembayaran</li>
+                    </ul>
+                `;
+                taxRate = 0.005;
+                break;
+        }
+        
+        // Calculate and update totals
+        const taxAmount = Math.round(baseSubtotal * taxRate);
+        const totalAmount = baseSubtotal + taxAmount + shippingFee;
+        
+        document.getElementById('taxAmount').textContent = 
+            'Rp ' + taxAmount.toLocaleString('id-ID');
+        document.getElementById('totalAmount').textContent = 
+            'Rp ' + totalAmount.toLocaleString('id-ID');
+            
+        if (method === 'bca') {
+            document.getElementById('transferAmount').textContent = 
+                'Rp ' + totalAmount.toLocaleString('id-ID');
+        }
+        
+        // Update the hidden payment method radio
+        document.querySelector(`input[value="${method === 'qris' ? 'QRIS' : method === 'bca' ? 'BCA' : 'COD'}"]`).checked = true;
+    }
+    
+    // QR Code functions
+    function showQRCode(orderCode, amount) {
+        document.getElementById('orderCodeDisplay').textContent = 
+            'Kode Order: ' + orderCode;
+        document.getElementById('orderAmountDisplay').textContent = 
+            'Rp ' + amount.toLocaleString('id-ID');
+        
+        // Generate QR code (simplified - in production use a library)
+        const qrDisplay = document.getElementById('qrCodeDisplay');
+        qrDisplay.innerHTML = `
+            <div class="qr-code" style="background: white; padding: 20px; border-radius: 10px;">
+                <div style="text-align: center; color: black; font-family: monospace;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">PIZZA LECKER THURY</p>
+                    <p>Order: ${orderCode}</p>
+                    <p>Amount: Rp ${amount.toLocaleString('id-ID')}</p>
+                    <p>Payment: QRIS</p>
+                    <div style="margin-top: 15px; font-size: 0.8rem;">
+                        [QR CODE SIMULATION]
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('qrModal').style.display = 'flex';
+    }
+    
+    function closeQRModal() {
+        document.getElementById('qrModal').style.display = 'none';
+    }
+    
+    // Form submission
+    document.querySelector('.checkout-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate form
+        const phone = document.querySelector('input[name="phone"]').value;
+        const address = document.querySelector('textarea[name="address"]').value;
+        const fullName = document.querySelector('input[name="full_name"]').value;
+        
+        if (!fullName.trim()) {
+            alert('Nama lengkap harus diisi.');
+            return;
+        }
+        
+        if (!phone.match(/^[0-9]{10,13}$/)) {
+            alert('Nomor WhatsApp tidak valid. Harus 10-13 digit angka.');
+            return;
+        }
+        
+        if (address.length < 10) {
+            alert('Alamat terlalu pendek. Masukkan alamat lengkap.');
+            return;
+        }
+        
+        // Show processing message
+        const submitBtn = document.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+        submitBtn.disabled = true;
+        
+        // Submit form
+        this.submit();
+    });
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        selectPayment('qris');
+        
+        // Auto-calculate totals
+        const taxElement = document.getElementById('taxAmount');
+        const totalElement = document.getElementById('totalAmount');
+        
+        if (taxElement && totalElement) {
+            const tax = Math.round(baseSubtotal * 0);
+            const total = baseSubtotal + tax + shippingFee;
+            
+            taxElement.textContent = 'Rp ' + tax.toLocaleString('id-ID');
+            totalElement.textContent = 'Rp ' + total.toLocaleString('id-ID');
+        }
+        
+        // Add animation to form elements
+        const formElements = document.querySelectorAll('.reveal-left, .reveal-right');
+        formElements.forEach((el, index) => {
+            el.style.animationDelay = `${index * 0.1}s`;
+        });
+        
+        // Check if there are items in the order
+        const orderItems = document.querySelector('.order-items');
+        if (orderItems && orderItems.children.length === 1) {
+            // Only has the empty state message
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-exclamation-circle"></i> TIDAK ADA PESANAN';
+                submitBtn.style.background = '#e74c3c';
+            }
+        }
+    });
+    
+    // Close modal with ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeQRModal();
+        }
+    });
+</script>
+
+<style>
+    .progress-steps {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 100px;
+        max-width: 120px;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #333;
+        color: #888;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+    
+    .progress-step.active .step-number {
+        background: var(--accent);
+        color: #000;
+        box-shadow: 0 0 15px rgba(255, 200, 0, 0.5);
+    }
+    
+    .progress-step.completed .step-number {
+        background: #2ecc71;
+        color: #fff;
+    }
+    
+    .step-label {
+        font-size: 0.8rem;
+        color: #888;
+        text-align: center;
+    }
+    
+    .progress-step.active .step-label {
+        color: var(--accent);
+        font-weight: 600;
+    }
+    
+    .payment-methods .payment-method {
+        background: rgba(255, 255, 255, 0.03);
+        border: 2px solid #333;
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .payment-methods .payment-method:hover {
+        border-color: #555;
+        transform: translateY(-2px);
+    }
+    
+    .payment-methods .payment-method.selected {
+        border-color: var(--accent);
+        background: rgba(255, 200, 0, 0.05);
+        transform: translateY(-2px);
+    }
+    
+    .payment-icon {
+        font-size: 1.8rem;
+        color: var(--accent);
+        margin-bottom: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .payment-info h4 {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        color: #fff;
+    }
+    
+    .payment-info p {
+        font-size: 0.75rem;
+        color: #888;
+    }
+    
+    .payment-instructions {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        border: 1px solid #333;
+    }
+    
+    .order-items {
+        padding-right: 5px;
+    }
+    
+    .order-item {
+        padding: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .price-breakdown {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .d-none {
+        display: none !important;
+    }
+    
+    .sticky-top {
+        position: sticky;
+    }
+    
+    .w-100 {
+        width: 100%;
+    }
+    
+    .min-height-screen {
+        min-height: 100vh;
+        padding-top: 100px;
+        padding-bottom: 60px;
+    }
+    
+    .reveal-left, .reveal-right {
+        opacity: 0;
+        transform: translateX(-20px);
+        transition: all 0.5s ease;
+    }
+    
+    .reveal-right {
+        transform: translateX(20px);
+    }
+    
+    .reveal-left.active, .reveal-right.active {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    /* Scrollbar styling */
+    .order-items::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .order-items::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 2px;
+    }
+    
+    .order-items::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 2px;
+    }
+    
+    @media (max-width: 768px) {
+        .min-height-screen {
+            padding-top: 90px;
+            padding-bottom: 40px;
+        }
+        
+        .progress-step {
+            min-width: 80px;
+        }
+        
+        .step-number {
+            width: 35px;
+            height: 35px;
+            font-size: 0.8rem;
+        }
+        
+        .step-label {
+            font-size: 0.7rem;
+        }
+        
+        .payment-icon {
+            font-size: 1.5rem;
+            height: 40px;
+        }
+        
+        .payment-info h4 {
+            font-size: 0.85rem;
+        }
+        
+        .sticky-top {
+            position: static;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .progress-steps {
+            gap: 5px;
+        }
+        
+        .progress-step {
+            min-width: 70px;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+        }
+    }
+    
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+    }
+    
+    .modal-content {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 25px;
+        max-width: 400px;
+        width: 100%;
+        border: 2px solid var(--accent);
+        animation: modalAppear 0.3s ease;
+    }
+    
+    @keyframes modalAppear {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .qr-container {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .qr-placeholder {
+        text-align: center;
+        color: #666;
+        padding: 20px;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .d-flex {
+        display: flex;
+    }
+    
+    .justify-content-between {
+        justify-content: space-between;
+    }
+    
+    .align-items-center {
+        align-items: center;
+    }
+    
+    .align-items-start {
+        align-items: flex-start;
+    }
+    
+    .mb-0 {
+        margin-bottom: 0 !important;
+    }
+    
+    .mt-4 {
+        margin-top: 20px !important;
+    }
+    
+    .mt-3 {
+        margin-top: 15px !important;
+    }
+    
+    .mt-2 {
+        margin-top: 10px !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 20px !important;
+    }
+    
+    .mb-3 {
+        margin-bottom: 15px !important;
+    }
+    
+    .mb-2 {
+        margin-bottom: 10px !important;
+    }
+    
+    .mb-1 {
+        margin-bottom: 5px !important;
+    }
+</style>
+{% endblock %}

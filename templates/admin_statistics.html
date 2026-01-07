@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-height-screen pt-5 pb-4 bg-dark">
+    <div class="container">
+        <div class="glass-panel animate__animated animate__fadeIn">
+            <!-- Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                <div>
+                    <h2 class="gold mb-1">
+                        <i class="fa-solid fa-chart-line"></i> Statistik 3 Hari Terakhir
+                    </h2>
+                    <p class="text-gray text-small">Periode: {{ now().strftime('%d %b %Y') }}</p>
+                </div>
+                
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="/admin/orders" class="btn-outline">
+                        <i class="fa-solid fa-clipboard-list"></i> Pesanan
+                    </a>
+                    <a href="/admin/users" class="btn-outline">
+                        <i class="fa-solid fa-users"></i> Users
+                    </a>
+                    <button onclick="refreshStats()" class="btn-gold">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stat-grid mb-4">
+                <div class="stat-card" style="border-left: 4px solid #2ecc71;">
+                    <small>Pendapatan</small>
+                    <h3>Rp {{ "{:,}".format(revenue.total_pendapatan or 0) }}</h3>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #3498db;">
+                    <small>User Baru</small>
+                    <h3>{{ new_users.user_baru or 0 }}</h3>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #9b59b6;">
+                    <small>Pizza Terjual</small>
+                    <h3>{{ sales.total_terjual or 0 }} pcs</h3>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #e74c3c;">
+                    <small>Best Seller</small>
+                    <h3 class="text-small">
+                        {% if best_sellers|length > 0 %}
+                            {{ best_sellers[0].menu_nama|truncate(12) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </h3>
+                </div>
+            </div>
+
+            <!-- Charts and Tables -->
+            <div class="row">
+                <!-- Daily Stats -->
+                <div class="col-lg-7 mb-4">
+                    <div class="glass-panel h-100">
+                        <h4 class="gold mb-3">
+                            <i class="fa-solid fa-calendar-day"></i> Statistik Per Hari
+                        </h4>
+                        
+                        <div class="responsive-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Hari</th>
+                                        <th class="text-center">Pesanan</th>
+                                        <th class="text-right">Pendapatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stat in daily_stats %}
+                                    <tr>
+                                        <td data-label="Hari">
+                                            <span class="text-gray">{{ stat.hari }}</span>
+                                        </td>
+                                        <td data-label="Pesanan" class="text-center">
+                                            <span class="badge-count">{{ stat.jumlah_pesanan or 0 }}</span>
+                                        </td>
+                                        <td data-label="Pendapatan" class="text-right">
+                                            <span class="text-success">Rp {{ "{:,}".format(stat.pendapatan or 0) }}</span>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4">
+                                            <p class="text-gray">Tidak ada data</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Best Sellers -->
+                <div class="col-lg-5 mb-4">
+                    <div class="glass-panel h-100">
+                        <h4 class="gold mb-3">
+                            <i class="fa-solid fa-chart-pie"></i> Top 5 Best Seller
+                        </h4>
+                        
+                        {% if best_sellers|length > 0 %}
+                            <div class="best-seller-list">
+                                {% for item in best_sellers %}
+                                <div class="best-seller-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                {% if loop.index <= 3 %}
+                                                <span class="rank-badge rank-{{ loop.index }}">
+                                                    {{ loop.index }}
+                                                </span>
+                                                {% else %}
+                                                <span class="rank-number">{{ loop.index }}</span>
+                                                {% endif %}
+                                                <span class="product-name">{{ item.menu_nama|truncate(25) }}</span>
+                                            </div>
+                                            <small class="text-gray">Terjual: {{ item.total_terjual }} pcs</small>
+                                        </div>
+                                        <div class="product-stats">
+                                            <span class="text-success text-small">
+                                                Rp {{ "{:,}".format((item.total_terjual * 50000)|int) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fa-solid fa-chart-line" style="font-size: 3rem; color: #333; margin-bottom: 15px;"></i>
+                                <p class="text-gray">Belum ada data penjualan</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshStats() {
+    const refreshBtn = document.querySelector('button[onclick="refreshStats()"]');
+    const originalHtml = refreshBtn.innerHTML;
+    
+    refreshBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memuat...';
+    refreshBtn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+
+// Simple chart for best sellers
+document.addEventListener('DOMContentLoaded', function() {
+    const bestSellers = document.querySelectorAll('.best-seller-item');
+    let maxSales = 0;
+    
+    // Find max sales for percentage calculation
+    bestSellers.forEach(item => {
+        const salesText = item.querySelector('small').textContent;
+        const sales = parseInt(salesText.match(/\d+/)[0]);
+        if (sales > maxSales) maxSales = sales;
+    });
+    
+    // Add progress bars
+    bestSellers.forEach(item => {
+        const salesText = item.querySelector('small').textContent;
+        const sales = parseInt(salesText.match(/\d+/)[0]);
+        const percentage = (sales / maxSales) * 100;
+        
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        progressBar.style.width = `${percentage}%`;
+        progressBar.style.height = '4px';
+        progressBar.style.background = 'var(--accent)';
+        progressBar.style.borderRadius = '2px';
+        progressBar.style.marginTop = '5px';
+        
+        item.appendChild(progressBar);
+    });
+});
+</script>
+
+<style>
+.badge-count {
+    background: var(--accent);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    min-width: 30px;
+    display: inline-block;
+    text-align: center;
+}
+
+.text-success {
+    color: #2ecc71 !important;
+    font-weight: 600;
+}
+
+.best-seller-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.best-seller-item {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rank-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.rank-1 {
+    background: #ffc800;
+    color: #000;
+}
+
+.rank-2 {
+    background: #c0c0c0;
+    color: #000;
+}
+
+.rank-3 {
+    background: #cd7f32;
+    color: #000;
+}
+
+.rank-number {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #888;
+    flex-shrink: 0;
+}
+
+.product-name {
+    color: #fff;
+    font-weight: 500;
+}
+
+.product-stats {
+    flex-shrink: 0;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+/* Scrollbar styling */
+.best-seller-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.best-seller-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.best-seller-list::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+}
+
+.best-seller-list::-webkit-scrollbar-thumb:hover {
+    background: #ffd700;
+}
+</style>
+{% endblock %}

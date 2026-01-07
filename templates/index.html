@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero-full">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-container">
+        <h1 class="hero-title animate__animated animate__fadeInDown">
+            THE ART OF <br><span class="gold">PIZZA LUXURY</span>
+        </h1>
+        <p class="hero-subtitle animate__animated animate__fadeInUp">
+            Resep rahasia keluarga Thury sejak 1998. Dipanggang dengan cinta, disajikan dengan kemewahan.
+            Setiap irisan adalah mahakarya rasa yang tak terlupakan.
+        </p>
+        <div class="hero-btns animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+            <a href="#menu" class="btn-gold">
+                <i class="fa-solid fa-utensils"></i> EXPLORE MENU
+            </a>
+            <a href="/order" class="btn-outline">
+                <i class="fa-solid fa-bolt"></i> FAST ORDER
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="about" class="about-section">
+    <div class="container">
+        <div class="about-container">
+            <div class="about-img reveal-left">
+                <div style="position: relative;">
+                    <img src="https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=1000" 
+                         alt="Our Kitchen" 
+                         style="width: 100%; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                    <div class="badge-exp">EST. 1998</div>
+                </div>
+            </div>
+            <div class="about-text reveal-right">
+                <span class="gold-tag">OUR HERITAGE</span>
+                <h2 style="color: #fff; line-height: 1.2;">
+                    Lebih Dari Sekadar <br> 
+                    <span class="gold">Sepotong Pizza</span>
+                </h2>
+                <p>
+                    Kami menggabungkan gandum Italia pilihan dengan teknik fermentasi lama 48 jam 
+                    untuk menciptakan tekstur yang otentik dan rasa yang mendalam. Setiap adonan 
+                    diuleni dengan tangan, dipanggang dengan kayu ek pilihan pada suhu 300°C.
+                </p>
+                <p>
+                    Komitmen kami pada kualitas membuat setiap pizza yang keluar dari oven kami 
+                    menjadi karya seni kuliner yang siap memanjakan lidah Anda.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AUTO SLIDER -->
+<section class="auto-slider">
+    <div class="slider-track" id="sliderTrack">
+        <div class="slide-item active" 
+             style="background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=2000');">
+            <div class="slide-overlay"></div>
+            <div class="slide-caption reveal-left">
+                <span class="gold-tag">ARTISAN CRAFT</span>
+                <h2>Adonan 48 Jam</h2>
+                <p>Fermentasi lama untuk tekstur ringan, renyah, dan rasa yang kompleks.</p>
+            </div>
+        </div>
+        <div class="slide-item" 
+             style="background-image: url('https://plus.unsplash.com/premium_photo-1664391921404-591084d5d2be?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHBpenphJTIwYmFiaXxlbnwwfHwwfHx8MA%3D%3D');">
+            <div class="slide-overlay"></div>
+            <div class="slide-caption reveal-left">
+                <span class="gold-tag">OAK WOOD FIRED</span>
+                <h2>Suhu 300°C</h2>
+                <p>Aroma smoky kayu ek pilihan yang menggugah selera, panggang sempurna.</p>
+            </div>
+        </div>
+        <div class="slide-item" 
+             style="background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2000');">
+            <div class="slide-overlay"></div>
+            <div class="slide-caption reveal-left">
+                <span class="gold-tag">PREMIUM INGREDIENTS</span>
+                <h2>Bahan Pilihan</h2>
+                <p>Mozzarella Italia, pepperoni pilihan, dan saus tomat San Marzano.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MENU SECTION -->
+<section id="menu" class="menu-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="gold-tag">SIGNATURE MENU</span>
+            <h2 style="font-size: 2.5rem; color: #fff; margin-bottom: 10px;">Chef's Recommendations</h2>
+            <p style="color: var(--text-gray); max-width: 600px; margin: 0 auto;">
+                Pilihan pizza premium kami yang telah menjadi favorit pelanggan sejak pertama kali diluncurkan.
+            </p>
+        </div>
+        
+        <div class="menu-grid">
+            {% if pizzas and pizzas|length > 0 %}
+                {% for pizza in pizzas %}
+                <div class="menu-card reveal" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+                    <img src="{{ pizza.gambar_url or 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=1000' }}" 
+                         alt="{{ pizza.nama }}">
+                    <div class="menu-content">
+                        <h3>{{ pizza.nama }}</h3>
+                        <p>{{ pizza.deskripsi or 'Pizza premium dengan bahan-bahan pilihan terbaik.' }}</p>
+                        <div class="menu-price">Rp {{ "{:,}".format(pizza.harga) }}</div>
+                        <a href="/order" class="btn-gold" style="display: block; text-align: center;">
+                            <i class="fa-solid fa-cart-plus"></i> PESAN SEKARANG
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Fallback jika tidak ada data -->
+                <div class="col-12 text-center" style="padding: 50px;">
+                    <i class="fa-solid fa-pizza-slice" style="font-size: 4rem; color: #333; margin-bottom: 20px;"></i>
+                    <h3 style="color: #666;">Menu sedang dalam persiapan</h3>
+                    <p>Silakan hubungi kami untuk informasi menu terbaru.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- STATS SECTION -->
+<section style="padding: 80px 0; background: #0c0c0c;">
+    <div class="container">
+        <div class="row" style="text-align: center;">
+            <div class="col-md-4 reveal">
+                <div class="stat-box">
+                    <div class="stat-num">27</div>
+                    <div class="stat-desc">Tahun Pengalaman</div>
+                </div>
+            </div>
+            <div class="col-md-4 reveal" style="animation-delay: 0.2s;">
+                <div class="stat-box">
+                    <div class="stat-num">50K+</div>
+                    <div class="stat-desc">Pelanggan Puas</div>
+                </div>
+            </div>
+            <div class="col-md-4 reveal" style="animation-delay: 0.4s;">
+                <div class="stat-box">
+                    <div class="stat-num">15</div>
+                    <div class="stat-desc">Variasi Pizza</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Slider Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-item');
+        
+        if(slides.length > 0) {
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 5000);
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
